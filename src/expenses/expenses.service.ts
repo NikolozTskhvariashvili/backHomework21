@@ -19,8 +19,13 @@ export class ExpensesService {
     },
   ];
 
-  GetAll() {
-    return this.expensesArr;
+  GetAll(priceFrom?:number, priceTo?:number) {
+    return this.expensesArr.filter(el =>{
+      if(priceFrom) return el.price >= priceFrom
+      if(priceTo) return el.price <= priceTo
+
+      return this.expensesArr
+    })
   }
 
   GetExpenseById(id: Number) {

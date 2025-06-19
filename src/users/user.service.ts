@@ -20,8 +20,15 @@ export class UserService {
     },
   ];
 
-  getAllUsers() {
-    return this.users;
+  getAllUsers(email?:string, gender?:string) {
+    return this.users.filter(el =>{
+      if(gender && gender === 'male')  return el.gender === 'male'
+      if(gender && gender === 'female')  return el.gender === 'female'
+      if(email)  return el.email.includes(email)
+
+
+        return this.users
+    })
   }
 
   getUserById(id: Number) {

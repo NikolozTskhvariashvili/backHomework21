@@ -6,18 +6,22 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserQueryParamDto } from './dto/query-params.dto';
 
 @Controller('users')
 export class UserController {
   constructor(private usersService: UserService) {}
 
   @Get()
-  getAllUsers() {
-    return this.usersService.getAllUsers();
+  getAllUsers(@Query() {take,page,email , gender} :UserQueryParamDto) {
+    console.log(take, page , "sdxfbvdsfbbbd")
+    return this.usersService.getAllUsers(email, gender);
+
   }
 
   @Get(':id')
