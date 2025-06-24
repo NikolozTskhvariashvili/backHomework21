@@ -19,7 +19,7 @@ export class ExpensesController {
         console.log(priceFrom, 'pricefrom')
         console.log(typeof priceFrom)
         console.log(priceTo, 'priceto')
-        return this.ExpensesService.GetAll(priceFrom, priceTo)
+        return this.ExpensesService.GetAll(priceFrom, priceTo,page,take)
     }
 
     @Get(':id')

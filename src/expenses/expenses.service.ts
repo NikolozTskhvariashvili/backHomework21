@@ -19,14 +19,24 @@ export class ExpensesService {
     },
   ];
 
-  GetAll(priceFrom?:number, priceTo?:number) {
-    return this.expensesArr.filter(el =>{
-      if(priceFrom) return el.price >= priceFrom
-      if(priceTo) return el.price <= priceTo
+GetAll(priceFrom?: number, priceTo?: number, page: number = 1, take: number = 10) {
+  let result = this.expensesArr;
 
-      return this.expensesArr
-    })
+  if (priceFrom != null) {
+    result = result.filter(el => el.price >= priceFrom);
   }
+
+  if (priceTo != null) {
+    result = result.filter(el => el.price <= priceTo);
+  }
+
+  const start = (page - 1) * take;
+  const end = start + take;
+
+  const pagination = result.slice(start, end);
+
+  return pagination;
+}
 
   GetExpenseById(id: Number) {
     const expense = this.expensesArr.find((el) => el.id === id);
