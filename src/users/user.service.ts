@@ -6,9 +6,16 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UserService {
+    constructor(
+    @InjectModel('user') private userModel: Model<User>
+  ){}
+
   private users = [
     {
       id: 1,
@@ -37,22 +44,28 @@ export class UserService {
     return user;
   }
 
-  CreateUser(CreateUserDto: CreateUserDto) {
-    const { firstName, lastName, email, phoneNumber, gender } = CreateUserDto;
-    if (!firstName || !lastName || !email || !phoneNumber || !gender)
-      throw new HttpException('firlds are required', HttpStatus.BAD_REQUEST);
+  // CreateUser(CreateUserDto: CreateUserDto) {
+  //   const { firstName, lastName, email, phoneNumber, gender } = CreateUserDto;
+  //   if (!firstName || !lastName || !email || !phoneNumber || !gender)
+  //     throw new HttpException('firlds are required', HttpStatus.BAD_REQUEST);
 
-    const lastId = this.users[this.users.length - 1]?.id || 0;
-    const newUser = {
-      id: lastId + 1,
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      gender,
-    };
-    this.users.push(newUser);
-    return 'user create dsuccsesfully';
+  //   const lastId = this.users[this.users.length - 1]?.id || 0;
+  //   const newUser = {
+  //     id: lastId + 1,
+  //     firstName,
+  //     lastName,
+  //     email,
+  //     phoneNumber,
+  //     gender,
+  //   };
+  //   this.users.push(newUser);
+  //   return 'user create dsuccsesfully';
+  // }
+
+
+  async create({email}: CreateUserDto) {
+    const newUser = await this.userModel.create({email})
+    return newUser
   }
 
   DeleteUser(id: Number) {

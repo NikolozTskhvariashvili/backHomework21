@@ -29,21 +29,21 @@ export class UserController {
     return this.usersService.getUserById(Number(id));
   }
 
-  @Post()
-  CreateUser(@Body() CreateUserDto: CreateUserDto) {
-    const firstName = CreateUserDto?.firstName;
-    const lastName = CreateUserDto?.lastName;
-    const email = CreateUserDto?.email;
-    const phoneNumber = CreateUserDto?.phoneNumber;
-    const gender = CreateUserDto?.gender;
-    return this.usersService.CreateUser({
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      gender,
-    });
-  }
+  // @Post()
+  // CreateUser(@Body() CreateUserDto: CreateUserDto) {
+  //   const firstName = CreateUserDto?.firstName;
+  //   const lastName = CreateUserDto?.lastName;
+  //   const email = CreateUserDto?.email;
+  //   const phoneNumber = CreateUserDto?.phoneNumber;
+  //   const gender = CreateUserDto?.gender;
+  //   return this.usersService.CreateUser({
+  //     firstName,
+  //     lastName,
+  //     email,
+  //     phoneNumber,
+  //     gender,
+  //   });
+  // }
 
   @Delete(':id')
   DeleteUser(@Param('id') id) {
