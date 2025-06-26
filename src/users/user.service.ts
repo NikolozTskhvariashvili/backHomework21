@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -7,14 +8,12 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UserService {
-    constructor(
-    @InjectModel('user') private userModel: Model<User>
-  ){}
+  constructor(@InjectModel('user') private userModel: Model<User>) {}
 
   private users = [
     {
@@ -27,46 +26,79 @@ export class UserService {
     },
   ];
 
-  getAllUsers(email?:string, gender?:string) {
-    return this.users.filter(el =>{
-      if(gender && gender === 'male')  return el.gender === 'male'
-      if(gender && gender === 'female')  return el.gender === 'female'
-      if(email)  return el.email.includes(email)
+  async getAllUsers(email?: string, gender?: string) {
+    // return this.users.filter((el) => {
+    //   if (gender && gender === 'male') return el.gender === 'male';
+    //   if (gender && gender === 'female') return el.gender === 'female';
+    //   if (email) return el.email.includes(email);
 
+    //   return this.users;
+    // });
 
-        return this.users
-    })
+    const users = await this.userModel.find();
+    return users;
   }
 
-  getUserById(id: Number) {
-    const user = this.users.find((el) => el.id === id);
-    if (!user) throw new NotFoundException('user not found');
+  getUserById(id: string) {
+    // const user = this.users.find((el) => el.id === id);
+    // if (!user) throw new NotFoundException('user not found');
+    // return user;
+    if (!isValidObjectId(id)) throw new BadRequestException('invalid id');
+
+    const user = this.userModel.findById(id);
     return user;
   }
 
-  // CreateUser(CreateUserDto: CreateUserDto) {
-  //   const { firstName, lastName, email, phoneNumber, gender } = CreateUserDto;
-  //   if (!firstName || !lastName || !email || !phoneNumber || !gender)
-  //     throw new HttpException('firlds are required', HttpStatus.BAD_REQUEST);
+  async CreateUser({
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    gender,
+  }: CreateUserDto) {
+    // const { firstName, lastName, email, phoneNumber, gender } = CreateUserDto;
+    // if (!firstName || !lastName || !email || !phoneNumber || !gender)
+    //   throw new HttpException('firlds are required', HttpStatus.BAD_REQUEST);
 
-  //   const lastId = this.users[this.users.length - 1]?.id || 0;
-  //   const newUser = {
-  //     id: lastId + 1,
-  //     firstName,
-  //     lastName,
-  //     email,
-  //     phoneNumber,
-  //     gender,
-  //   };
-  //   this.users.push(newUser);
-  //   return 'user create dsuccsesfully';
-  // }
+    const subscriptionStartDate = new Date();
+    const subscriptionEndDate = new Date(subscriptionStartDate);
 
+    subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
 
-  async create({email}: CreateUserDto) {
-    const newUser = await this.userModel.create({email})
-    return newUser
+    // const lastId = this.users[this.users.length - 1]?.id || 0;
+
+    // const newUser = {
+    //   id: lastId + 1,
+    //   firstName,
+    //   lastName,
+    //   email,
+    //   phoneNumber,
+    //   gender,
+    //   subscriptionStartDate,
+    //   subscriptionEndDate,
+    // };
+    // this.users.push(newUser);
+
+    const existUser = await this.userModel.findOne({ email });
+    if (existUser) throw new BadRequestException('user arlready exist');
+
+    await this.userModel.create({
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      gender,
+      subscriptionStartDate,
+      subscriptionEndDate,
+    });
+
+    return 'user create dsuccsesfully';
   }
+
+  // async create({email}: CreateUserDto) {
+  //   const newUser = await this.userModel.create({email})
+  //   return newUser
+  // }
 
   DeleteUser(id: Number) {
     const index = this.users.findIndex((el) => el.id === id);
@@ -91,5 +123,33 @@ export class UserService {
     this.users[index] = { ...this.users[index], ...updateReq };
 
     return 'updated succsesfully';
+  }
+
+  async UpdateSubscription(
+    id: string,
+    { email, firstName, gender, lastName, phoneNumber }: UpdateUserDto,
+  ) {
+    if (!isValidObjectId(id)) throw new BadRequestException('invalid id');
+
+    const user = await this.userModel.findById(id);
+    if (!user) throw new NotFoundException('user not found');
+
+    const now = new Date();
+    const currentEndDate = new Date(user.subscriptionEndDate);
+    const upgradeStart = currentEndDate > now ? currentEndDate : now;
+
+    const newEndDate = new Date(upgradeStart);
+    newEndDate.setMonth(newEndDate.getMonth() + 1);
+
+    const updatedsub = await this.userModel.findByIdAndUpdate(id, {
+      subscriptionEndDate: newEndDate,
+      email,
+      firstName,
+      gender,
+      lastName,
+      phoneNumber,
+    });
+
+    return { message: 'updated', data: updatedsub };
   }
 }
