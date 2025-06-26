@@ -15,8 +15,6 @@ export class StripeService {
         this.stripe = new Stripe(process.env.STRIPE_API_KEY as string)
     }
 
-    // price_1Rdt6KFl246mDYag3bC2WVur
-
     async createPayment(userEmail: string, priceId, quantity) {
         const user = await this.userModel.findOne({ email: userEmail })
         if (!user?._id) {
@@ -63,7 +61,6 @@ export class StripeService {
         try {
             event = this.stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_KEY!)
         } catch (err) {
-            console.log("shemovida", err)
             throw new BadRequestException('errro')
         }
 
