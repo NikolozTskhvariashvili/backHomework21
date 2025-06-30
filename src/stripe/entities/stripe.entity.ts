@@ -27,6 +27,13 @@ export class Transaction {
         default: Status.PENDING
     })
     status: string
+
+      @Prop({
+        type:mongoose.Schema.Types.ObjectId,
+      ref:'user',
+        required:true
+      })
+      author: mongoose.Schema.Types.ObjectId
 }
 
 

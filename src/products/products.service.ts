@@ -42,7 +42,6 @@ export class ProductsService {
   async findOne(id: string) {
     if (!isValidObjectId(id)) throw new BadRequestException('invalid id');
     const product = await this.ProductModel.findById(id);
-    console.log(product);
     
     if (!product) throw new BadRequestException('product not found');
 

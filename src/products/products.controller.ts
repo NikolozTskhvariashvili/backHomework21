@@ -3,8 +3,10 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { HasEmail } from 'src/guards/Has-email.guard';
+import { HasId } from 'src/guards/Has-Id.guard';
 
 @UseGuards(HasEmail)
+@UseGuards(HasId)
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}

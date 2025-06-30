@@ -1,7 +1,9 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { PaymentDto } from './dto/create-stripe.dto';
+import { HasId } from 'src/guards/Has-Id.guard';
 
+@UseGuards(HasId)
 @Controller('stripe')
 export class StripeController {
   constructor(private readonly stripeService: StripeService) {}

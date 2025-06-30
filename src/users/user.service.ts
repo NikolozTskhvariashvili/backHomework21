@@ -35,17 +35,20 @@ export class UserService {
     //   return this.users;
     // });
 
-    const users = await this.userModel.find();
+    const users = await this.userModel.find().populate({path:'expenses', select:'productName price'})
+    
     return users;
   }
 
-  getUserById(id: string) {
+  async getUserById(id: string) {
     // const user = this.users.find((el) => el.id === id);
     // if (!user) throw new NotFoundException('user not found');
     // return user;
     if (!isValidObjectId(id)) throw new BadRequestException('invalid id');
 
-    const user = this.userModel.findById(id);
+    const user = await this.userModel.findById(id);
+
+    if (!user) throw new BadRequestException('user not found');
     return user;
   }
 
@@ -100,28 +103,49 @@ export class UserService {
   //   return newUser
   // }
 
-  DeleteUser(id: Number) {
-    const index = this.users.findIndex((el) => el.id === id);
-    if (index === -1) throw new NotFoundException('user not found');
+  async DeleteUser(id) {
+    // const index = this.users.findIndex((el) => el.id === id);
+    // if (index === -1) throw new NotFoundException('user not found');
 
-    this.users.splice(index, 1);
-    return 'user deleted succsesfully';
+    // this.users.splice(index, 1);
+    // return 'user deleted succsesfully';
+
+    if (!isValidObjectId(id)) throw new BadRequestException('inalid id');
+    const user = await this.userModel.findById(id);
+
+    if (!user) throw new BadRequestException('user not found');
+
+    await this.userModel.findByIdAndDelete(id);
+    return 'usre deleted succsesfully';
   }
 
-  UpdateUser(id: Number, UpdateUserDto: UpdateUserDto) {
-    const index = this.users.findIndex((el) => el.id === id);
-    if (index === -1) throw new NotFoundException('user not found');
+  async UpdateUser(
+    id,
+    {   email, firstName, gender, lastName, phoneNumber }: UpdateUserDto,
+  ) {
+    // const index = this.users.findIndex((el) => el.id === id);
+    // if (index === -1) throw new NotFoundException('user not found');
 
-    const updateReq: UpdateUserDto = {};
-    if (UpdateUserDto.firstName) updateReq.firstName = UpdateUserDto.firstName;
-    if (UpdateUserDto.lastName) updateReq.lastName = UpdateUserDto.lastName;
-    if (UpdateUserDto.email) updateReq.email = UpdateUserDto.email;
-    if (UpdateUserDto.phoneNumber)
-      updateReq.phoneNumber = UpdateUserDto.phoneNumber;
-    if (UpdateUserDto.gender) updateReq.gender = UpdateUserDto.gender;
+    // const updateReq: UpdateUserDto = {};
+    // if (UpdateUserDto.firstName) updateReq.firstName = UpdateUserDto.firstName;
+    // if (UpdateUserDto.lastName) updateReq.lastName = UpdateUserDto.lastName;
+    // if (UpdateUserDto.email) updateReq.email = UpdateUserDto.email;
+    // if (UpdateUserDto.phoneNumber)
+    //   updateReq.phoneNumber = UpdateUserDto.phoneNumber;
+    // if (UpdateUserDto.gender) updateReq.gender = UpdateUserDto.gender;
 
-    this.users[index] = { ...this.users[index], ...updateReq };
+    // this.users[index] = { ...this.users[index], ...updateReq };
 
+    if (!isValidObjectId(id)) throw new BadRequestException('invalid id');
+
+    const user = await this.userModel.findById(id);
+
+    if (!user) throw new BadRequestException('user not found');
+
+
+    await this.userModel.findByIdAndUpdate(id, {email,firstName,gender,lastName,phoneNumber})
+
+    
     return 'updated succsesfully';
   }
 

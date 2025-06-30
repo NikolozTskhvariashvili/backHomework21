@@ -46,12 +46,12 @@ export class UserController {
 
   @Delete(':id')
   DeleteUser(@Param('id') id) {
-    return this.usersService.DeleteUser(Number(id));
+    return this.usersService.DeleteUser(id);
   }
 
   @Put(':id')
   UpdateUser(@Param('id') id, @Body() UpdateUserDto: UpdateUserDto) {
-    return this.usersService.UpdateUser(Number(id), UpdateUserDto);
+    return this.usersService.UpdateUser(id, UpdateUserDto);
   }
 
   @Put('/upgrade-subscription/:id')
