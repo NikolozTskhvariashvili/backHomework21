@@ -116,8 +116,10 @@ export class ExpensesService {
 
     const existedUser = await this.UserModel.findById(userId);
     if (!existedUser) throw new BadRequestException('user not found');
-
+    
     if (!isValidObjectId(id)) throw new BadRequestException('invalid id');
+    const expense = await this.ExpensesModel.findById(id)
+    if(expense?._id !== userId) throw new BadRequestException('not ur epense')
 
     await this.ExpensesModel.findByIdAndDelete(id);
 
@@ -126,9 +128,12 @@ export class ExpensesService {
     return 'epens delete succsesfuly';
   }
 
-  updateExpense(id: number, updateExpenseDto: updateExpenseDto) {
+  async updateExpense(id: number, updateExpenseDto: updateExpenseDto,userId) {
     const index = this.expensesArr.findIndex((el) => el.id === id);
     if (index === -1) throw new NotFoundException('expense not found');
+
+        const expense = await this.ExpensesModel.findById(id)
+    if(expense?._id !== userId) throw new BadRequestException('not ur epense')
 
     const updateReq: updateExpenseDto = {};
     if (updateExpenseDto.category)
@@ -144,3 +149,6 @@ export class ExpensesService {
     this.expensesArr[index] = { ...this.expensesArr[index], ...updateReq };
   }
 }
+
+
+//686bc81843959e542b1d8b71

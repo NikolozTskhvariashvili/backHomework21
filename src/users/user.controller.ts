@@ -28,21 +28,21 @@ export class UserController {
     return this.usersService.getUserById(id);
   }
 
-  @Post()
-  CreateUser(@Body() CreateUserDto: CreateUserDto) {
-    const firstName = CreateUserDto?.firstName;
-    const lastName = CreateUserDto?.lastName;
-    const email = CreateUserDto?.email;
-    const phoneNumber = CreateUserDto?.phoneNumber;
-    const gender = CreateUserDto?.gender;
-    return this.usersService.CreateUser({
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      gender,
-    });
-  }
+  // @Post()
+  // CreateUser(@Body() CreateUserDto: CreateUserDto) {
+  //   const firstName = CreateUserDto?.firstName;
+  //   const lastName = CreateUserDto?.lastName;
+  //   const email = CreateUserDto?.email;
+  //   const phoneNumber = CreateUserDto?.phoneNumber;
+  //   const gender = CreateUserDto?.gender;
+  //   return this.usersService.CreateUser({
+  //     firstName,
+  //     lastName,
+  //     email,
+  //     phoneNumber,
+  //     gender,
+  //   });
+  // }
 
   @Delete(':id')
   DeleteUser(@Param('id') id) {
@@ -54,10 +54,10 @@ export class UserController {
     return this.usersService.UpdateUser(id, UpdateUserDto);
   }
 
-  @Put('/upgrade-subscription/:id')
-  UpdateSubscription(@Param('id') id,@Body() UpdateUserDto: UpdateUserDto) {
-    return this.usersService.UpdateSubscription(id,UpdateUserDto);
-  }
+  // @Put('/upgrade-subscription/:id')
+  // UpdateSubscription(@Param('id') id,@Body() UpdateUserDto: UpdateUserDto) {
+  //   return this.usersService.UpdateSubscription(id,UpdateUserDto);
+  // }
 }
 
 // 685d4e0bc0807b267ca24043

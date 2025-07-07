@@ -5,11 +5,13 @@ import { updateExpenseDto } from "./dto/update-expense.dto";
 import { ExpenseQueryParamsDto } from "./dto/query-params.dto";
 import { CategoryPipe } from "./pipes/category.pipe";
 import { HasId } from "src/guards/Has-Id.guard";
+import { IsAuth } from "src/auth/guards/isAuth.guard";
 
 
 
 
-@UseGuards(HasId)
+// @UseGuards(HasId)
+@UseGuards(IsAuth)
 @Controller('expenses')
 export class ExpensesController {
     constructor(private ExpensesService:ExpensesService){}
@@ -46,8 +48,8 @@ export class ExpensesController {
 
 
     @Put(':id')
-    updateExpnese(@Param('id') id, @Body() updateExpenseDto:updateExpenseDto){
-        return this.ExpensesService.updateExpense(Number(id), updateExpenseDto)
+    updateExpnese(@Param('id') id, @Body() updateExpenseDto:updateExpenseDto, @Headers('user-id') userId){
+        return this.ExpensesService.updateExpense(Number(id), updateExpenseDto, userId)
     }
 
 }

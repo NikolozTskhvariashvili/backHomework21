@@ -15,44 +15,44 @@ export class StripeService {
     this.stripe = new Stripe(process.env.STRIPE_API_KEY as string);
   }
 
-  async createPayment(userEmail: string, priceId, quantity, userId) {
-    const user = await this.userModel.findOne({ email: userEmail });
-    if (!user?._id) {
-      throw new BadRequestException('User not found');
-    }
+//   async createPayment(userEmail: string, priceId, quantity, userId) {
+//     const user = await this.userModel.findOne({ email: userEmail });
+//     if (!user?._id) {
+//       throw new BadRequestException('User not found');
+//     }
 
-    const customerId = user.stripeCustomerId
-      ? user.stripeCustomerId
-      : await this.createStripeCutomerId(user._id, user.email);
-    const session = await this.stripe.checkout.sessions.create({
-      customer: customerId,
-      line_items: [
-        {
-          price: priceId,
-          quantity: quantity,
-        },
-      ],
-      mode: 'payment',
-      success_url: `${process.env.FRONT_URL}?type=success`,
-      cancel_url: `${process.env.FRONT_URL}?type=cancel`,
-      metadata: {
-        userId: user._id.toString(),
-      },
-    });
+//     const customerId = user.stripeCustomerId
+//       ? user.stripeCustomerId
+//       : await this.createStripeCutomerId(user._id, user.email);
+//     const session = await this.stripe.checkout.sessions.create({
+//       customer: customerId,
+//       line_items: [
+//         {
+//           price: priceId,
+//           quantity: quantity,
+//         },
+//       ],
+//       mode: 'payment',
+//       success_url: `${process.env.FRONT_URL}?type=success`,
+//       cancel_url: `${process.env.FRONT_URL}?type=cancel`,
+//       metadata: {
+//         userId: user._id.toString(),
+//       },
+//     });
+// 
+//     const newTransaction = await this.transactionModel.create({
+//       sessionId: session.id,
+//       userId: user._id,
+//       amount: session.amount_total ? session.amount_total / 100 : 0,
+//       author: userId
+//     });
 
-    const newTransaction = await this.transactionModel.create({
-      sessionId: session.id,
-      userId: user._id,
-      amount: session.amount_total ? session.amount_total / 100 : 0,
-      author: userId
-    });
+//     await this.userModel.findByIdAndUpdate(userId, {
+//       $push: { transactions: newTransaction._id },
+//     });
 
-    await this.userModel.findByIdAndUpdate(userId, {
-      $push: { transactions: newTransaction._id },
-    });
-
-    return { url: session.url };
-  }
+//     return { url: session.url };
+//   }
 
   async createStripeCutomerId(userId, userEmail) {
     const customer = await this.stripe.customers.create({ email: userEmail });

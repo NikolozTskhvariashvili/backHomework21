@@ -149,31 +149,31 @@ export class UserService {
     return 'updated succsesfully';
   }
 
-  async UpdateSubscription(
-    id: string,
-    { email, firstName, gender, lastName, phoneNumber }: UpdateUserDto,
-  ) {
-    if (!isValidObjectId(id)) throw new BadRequestException('invalid id');
+  // async UpdateSubscription(
+  //   id: string,
+  //   { email, firstName, gender, lastName, phoneNumber }: UpdateUserDto,
+  // ) {
+  //   if (!isValidObjectId(id)) throw new BadRequestException('invalid id');
 
-    const user = await this.userModel.findById(id);
-    if (!user) throw new NotFoundException('user not found');
+  //   const user = await this.userModel.findById(id);
+  //   if (!user) throw new NotFoundException('user not found');
 
-    const now = new Date();
-    const currentEndDate = new Date(user.subscriptionEndDate);
-    const upgradeStart = currentEndDate > now ? currentEndDate : now;
+  //   const now = new Date();
+  //   const currentEndDate = new Date(user.subscriptionEndDate);
+  //   const upgradeStart = currentEndDate > now ? currentEndDate : now;
 
-    const newEndDate = new Date(upgradeStart);
-    newEndDate.setMonth(newEndDate.getMonth() + 1);
+  //   const newEndDate = new Date(upgradeStart);
+  //   newEndDate.setMonth(newEndDate.getMonth() + 1);
 
-    const updatedsub = await this.userModel.findByIdAndUpdate(id, {
-      subscriptionEndDate: newEndDate,
-      email,
-      firstName,
-      gender,
-      lastName,
-      phoneNumber,
-    });
+  //   const updatedsub = await this.userModel.findByIdAndUpdate(id, {
+  //     subscriptionEndDate: newEndDate,
+  //     email,
+  //     firstName,
+  //     gender,
+  //     lastName,
+  //     phoneNumber,
+  //   });
 
-    return { message: 'updated', data: updatedsub };
-  }
+  //   return { message: 'updated', data: updatedsub };
+  // }
 }
