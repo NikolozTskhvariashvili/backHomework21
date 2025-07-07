@@ -9,8 +9,8 @@ export class StripeController {
   constructor(private readonly stripeService: StripeService) {}
 
   @Post('create-checkout')
-  createCheckout(@Body() {email, priceId, quantity}: PaymentDto){
-    return this.stripeService.createPayment(email, priceId, quantity)
+  createCheckout(@Body() {email, priceId, quantity}: PaymentDto, @Headers('user-id') userId){
+    return this.stripeService.createPayment(email, priceId, quantity, userId)
   }
 
   @Post('/webhook')
