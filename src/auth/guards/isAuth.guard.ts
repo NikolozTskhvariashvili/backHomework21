@@ -20,8 +20,10 @@ export class IsAuth implements CanActivate {
     console.log(this.jwtService)
     const payload = await this.jwtService.verify(token);
     req.userId = payload.id;
+    req.userRole = payload.role
     console.log(req.userId, 'userOd');
     console.log(payload, 'paylaod');
+    console.log(req.userRole, 'userRoleeeeeeeeeee req')
     }catch(e){
         throw new BadRequestException('token expired')
     }

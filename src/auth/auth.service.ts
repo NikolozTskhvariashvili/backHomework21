@@ -37,6 +37,7 @@ export class AuthService {
 
     const payload = {
       id: existUser._id,
+      role: existUser.role
     };
     console.log(this.jwtService)
     const token = await this.jwtService.sign(payload, { expiresIn: '1h' });

@@ -10,6 +10,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
 import { User } from './schemas/user.schema';
+import { ChangeRole } from './dto/change-role.dto';
 
 @Injectable()
 export class UserService {
@@ -35,8 +36,8 @@ export class UserService {
     //   return this.users;
     // });
 
-    const users = await this.userModel.find().populate({path:'expenses', select:'productName price'})
-    
+    const users = await this.userModel.find();
+
     return users;
   }
 
@@ -121,7 +122,7 @@ export class UserService {
 
   async UpdateUser(
     id,
-    {   email, firstName, gender, lastName, phoneNumber }: UpdateUserDto,
+    { email, firstName, gender, lastName, phoneNumber }: UpdateUserDto,
   ) {
     // const index = this.users.findIndex((el) => el.id === id);
     // if (index === -1) throw new NotFoundException('user not found');
@@ -142,10 +143,14 @@ export class UserService {
 
     if (!user) throw new BadRequestException('user not found');
 
+    await this.userModel.findByIdAndUpdate(id, {
+      email,
+      firstName,
+      gender,
+      lastName,
+      phoneNumber,
+    });
 
-    await this.userModel.findByIdAndUpdate(id, {email,firstName,gender,lastName,phoneNumber})
-
-    
     return 'updated succsesfully';
   }
 
@@ -176,4 +181,30 @@ export class UserService {
 
   //   return { message: 'updated', data: updatedsub };
   // }
+
+  async ChangeRole(admin: string, { email }: ChangeRole) {
+    console.log(admin, 'admin idddddddddd');
+    console.log(email, 'email');
+    if (!isValidObjectId(admin))
+      throw new BadRequestException('invalid id');
+    const adimn = await this.userModel.findById(admin);
+    console.log(adimn, 'admion userrrrrrrrrrrrr');
+
+    if (!adimn) throw new BadRequestException('user not found');
+
+    if (adimn.role !== "admin")
+      throw new BadRequestException('user is not admin');
+
+    if (adimn && email && adimn.role === 'admin') {
+      const futureAdmin = await this.userModel.findOne({ email });
+      if (!futureAdmin) throw new BadRequestException('user not ound');
+      if (futureAdmin?.role === 'admin')
+        throw new BadRequestException('user already admin');
+       futureAdmin.role = 'admin';
+      await futureAdmin.save()
+      console.log('object');
+      console.log(futureAdmin.role, 'new adminnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn')
+      return { message: 'role updated', data: futureAdmin };
+    }
+  }
 }

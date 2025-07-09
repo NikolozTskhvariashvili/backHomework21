@@ -29,6 +29,12 @@ export class User {
   })
   password: string;
 
+  @Prop({
+    type:String,
+    default: 'user'
+  })
+  role: string
+
   //   @Prop({
   //     type: String,
   //     required: true,
