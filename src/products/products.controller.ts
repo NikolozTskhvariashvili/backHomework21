@@ -4,16 +4,18 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { HasEmail } from 'src/guards/Has-email.guard';
 import { HasId } from 'src/guards/Has-Id.guard';
+import { IsAuth } from 'src/auth/guards/isAuth.guard';
 
-@UseGuards(HasEmail)
-@UseGuards(HasId)
+// @UseGuards(HasEmail)
+// @UseGuards(HasId)
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @UseGuards(IsAuth)
   @Post()
-  create(@Body() createProductDto: CreateProductDto, @Headers('user-id') userId) {
-    return this.productsService.create(createProductDto, userId);
+  create(@Body() createProductDto: CreateProductDto, @Req() req) {
+    return this.productsService.create(createProductDto, req.userId);
   }
 
   @Get()

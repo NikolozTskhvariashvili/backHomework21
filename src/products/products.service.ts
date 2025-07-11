@@ -15,6 +15,9 @@ export class ProductsService {
 
   async create({ category, desc, name, price }: CreateProductDto, userId) {
     const existedProduct = await this.ProductModel.findOne({ name });
+    console.log(userId, 'user iddddddddddddddddddddddddddddd')
+
+    if(!isValidObjectId(userId)) throw new BadRequestException('invalid id')
 
     if (existedProduct) throw new BadRequestException('product already exist');
 
